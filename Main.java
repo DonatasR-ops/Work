@@ -2,16 +2,11 @@ package com.company;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -22,7 +17,10 @@ public class Main extends Application {
     int side=0;
     int sh=0;
     int sh1=0;
-    int numberAliens=5;
+    int numberAliens=12;
+    int lowerAlien=0;
+    int nextAlien=100;
+    int [] checkAlien = new int [numberAliens];
     Rectangle defender= new Rectangle();
     public static void main(String[] args) {
         launch(args);
@@ -42,12 +40,18 @@ public class Main extends Application {
         ArrayList<Rectangle> aliens = new ArrayList();
         for (int i=0; i<numberAliens; i++) {
             Rectangle alien = new Rectangle();
-            alien.setX(100 + 50 * i);
-            alien.setY(20);
+            if((nextAlien+20)>=WIDTH){
+                lowerAlien+=40;
+                nextAlien=100;
+            }
+            alien.setX(nextAlien+=50);
+            alien.setY(20+lowerAlien);
             alien.setHeight(20);
             alien.setWidth(20);
             aliens.add(alien);
+            checkAlien[i]=1;
             root.getChildren().add(alien);
+
         }
         root.getChildren().add(defender);
         ArrayList<Rectangle> shots = new ArrayList();
@@ -65,15 +69,17 @@ public class Main extends Application {
                     }
                     break;
                 case UP:
-                    Rectangle shot = new Rectangle();
-                    shot.setX(defender.getX());
-                    shot.setY(defender.getY()-30);
-                    shot.setHeight(5);
-                    shot.setWidth(5);
-                    shot.setFill(Color.GREEN);
-                    shots.add(shot);
-                    sh++;
-                    root.getChildren().add(shot);
+                    if(sh==0) {
+                        Rectangle shot = new Rectangle();
+                        shot.setX(defender.getX());
+                        shot.setY(defender.getY() - 30);
+                        shot.setHeight(10);
+                        shot.setWidth(1);
+                        shot.setFill(Color.GREEN);
+                        shots.add(shot);
+                        sh++;
+                        root.getChildren().add(shot);
+                    }
 
 
             }
@@ -100,7 +106,18 @@ public class Main extends Application {
                         }
                     }
                     int randomNum = ThreadLocalRandom.current().nextInt(0, 0+500);
-                    if(randomNum==25 ){
+                    if(randomNum==25 && i>((numberAliens-7))){
+                        Rectangle shot = new Rectangle();
+                        shot.setX(aliens.get(i).getX());
+                        shot.setY(aliens.get(i).getY()+30);
+                        shot.setHeight(5);
+                        shot.setWidth(5);
+                        shot.setFill(Color.RED);
+                        alienShots.add(shot);
+                        root.getChildren().add(shot);
+                        sh1++;
+                    }
+                    else if(randomNum==25 && checkAlien[i+6]==0){
                         Rectangle shot = new Rectangle();
                         shot.setX(aliens.get(i).getX());
                         shot.setY(aliens.get(i).getY()+30);
@@ -115,10 +132,11 @@ public class Main extends Application {
                 for (int i=0; i<numberAliens; i++) {
                     for(int y=0 ;y<sh; y++){
                         System.out.println(aliens.get(i)+" "+shots.get(y));
-                        if(aliens.get(i).getX()-10<=shots.get(y).getX() && aliens.get(i).getX()+10>=shots.get(y).getX() && aliens.get(i).getY()-10>=shots.get(y).getY() ){
+                        if(shots.get(y).getX()>=aliens.get(i).getX() && shots.get(y).getX()<=aliens.get(i).getX()+20 && shots.get(y).getY()>=aliens.get(i).getY() && shots.get(y).getY()<=aliens.get(i).getY()+30){
                             root.getChildren().remove(aliens.get(i));
                             root.getChildren().remove(shots.get(y));
                             aliens.remove(i);
+                            checkAlien[i]=0;
                             shots.remove(y);
                             sh--;
                             numberAliens--;
@@ -132,16 +150,20 @@ public class Main extends Application {
                 }
 
                 if(sh!=0){
-                for(int i=0; i<sh;i++){
-                    shots.get(i).setY(shots.get(i).getY()-1);
-                }}
+                    for(int i=0; i<sh;i++){
+                        shots.get(i).setY(shots.get(i).getY()-1);
+                    }}
                 if(sh1!=0){
                     for(int i=0; i<sh1;i++){
                         System.out.println(defender.getX()+" "+defender.getY()+" "+alienShots.get(i));
-                        if(defender.getX()-10<=alienShots.get(i).getX() && defender.getX()+10>=alienShots.get(i).getX() && defender.getY()+10<=alienShots.get(i).getY() ){
+                        if(defender.getX()-4<=alienShots.get(i).getX() && defender.getX()+20>=alienShots.get(i).getX() && defender.getY()-4<=alienShots.get(i).getY() &&defender.getY()+20>=alienShots.get(i).getY()){
                             stage.close();
                         }
-                            alienShots.get(i).setY(alienShots.get(i).getY() + 1);
+                        if(alienShots.get(i).getY()> HEIGHT){
+                            alienShots.remove(i);
+                            sh1--;
+                        }
+                        alienShots.get(i).setY(alienShots.get(i).getY() + 1);
 
                     }}
 
