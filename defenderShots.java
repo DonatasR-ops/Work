@@ -1,5 +1,4 @@
 package com.company;
-import com.company.Defender;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -11,7 +10,6 @@ public class defenderShots {
    public int amountOfShots;
    public boolean powerUp=false;
    public ArrayList<Rectangle> shots = new ArrayList();
-   Main main=new Main();
 
    public void createShot(Rectangle defender, Group root){
 
@@ -35,10 +33,10 @@ public class defenderShots {
            }}
    }
 
-    public void chechShots(Group root,Aliens alien,Score score){
+    public void checkShots(Group root,Aliens alien,Score score){
         for (int i=0; i<alien.numberOfAliens; i++) {
             for(int y=0 ;y<amountOfShots; y++){
-                if(shots.get(y).getX()>=alien.aliens.get(i).getX() && shots.get(y).getX()<=alien.aliens.get(i).getX()+20 && shots.get(y).getY()>=alien.aliens.get(i).getY() && shots.get(y).getY()<=alien.aliens.get(i).getY()+30) {
+                if(shots.get(y).getX()>=alien.aliens.get(i).getX()-1 && shots.get(y).getX()<=alien.aliens.get(i).getX()+alien.shipWidth && shots.get(y).getY()>=alien.aliens.get(i).getY() && shots.get(y).getY()<=alien.aliens.get(i).getY()+alien.shipHeight+4) {
                     if(alien.aliens.get(i).getFill().equals(Color.PURPLE)){
                         powerUp=true;
                     }
@@ -49,10 +47,10 @@ public class defenderShots {
                     shots.remove(y);
                     amountOfShots--;
                     alien.numberOfAliens--;
-                    if(powerUp==false){
-                        score.score=score.score+10;}
+                    if(!powerUp){
+                        score.scoreCount=score.scoreCount+10;}
                     else {
-                        score.score=score.score+20;
+                        score.scoreCount=score.scoreCount+20;
                     }
                 }
                 else if(shots.get(y).getY()==1 && amountOfShots!=0){

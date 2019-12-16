@@ -5,17 +5,25 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 
-public class Defender {
-    private int spawnStartingPointX=190;
-    private int spawnStartingPointY=370;
+public class Defender extends Ship{
+    private int spawnStartingPointX;
+    private int spawnStartingPointY;
     public Rectangle defender= new Rectangle();
 
-    public void createDefender(Group root){
+    public Defender(int shipWidth, int shipHeight) {
+        super(shipWidth, shipHeight);
+    }
+
+    public void createShip(Group root,int Width, int Height){
+        spawnStartingPointX=(Width/2)-(shipWidth/2);
+        spawnStartingPointY=Height-(shipHeight*2);
         defender.setX(spawnStartingPointX);
         defender.setY(spawnStartingPointY);
-        defender.setHeight(20);
-        defender.setWidth(20);
+        defender.setHeight(shipHeight);
+        defender.setWidth(shipWidth);
         defender.setFill(Color.BLUE);
         root.getChildren().add(defender);
     }
+
+    
 }

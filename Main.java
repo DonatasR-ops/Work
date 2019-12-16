@@ -2,16 +2,10 @@ package com.company;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 
 public class Main extends Application {
-   public int WIDTH = 400;
-   public int HEIGHT = 400;
-   Text text=new Text();
 
 
     public static void main(String[] args) {
@@ -19,31 +13,29 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         stage.setTitle("Space Invaders");
-        Group root = new Group();
-        Scene scene = new Scene(root, WIDTH, HEIGHT);
-
-        Aliens alien= new Aliens();
+        Map map=new Map(400,400);
+        Aliens alien= new Aliens(20,20,12);
+        Defender defender=new Defender(20,20);
+        Score score=Score.getInstance();
         alienShots alienS=new alienShots();
         defenderShots defShots=new defenderShots();
-        Defender defender=new Defender();
-        Controlls controlls=new Controlls();
-        Score score=new Score();
-        alien.createAliens(root,WIDTH);
-        defender.createDefender(root);
-        controlls.initializeControls(defender.defender,scene,root,WIDTH,defShots);
-        stage.setScene(scene);
+        map.initializeScene();
+        alien.createShip(map.root,map.getWIDTH(),map.getHEIGHT());
+        defender.createShip(map.root,map.getWIDTH(),map.getHEIGHT());
+        map.initializeControls(defender.defender,map.scene,map.root,map.getWIDTH(),defShots,defender);
+        stage.setScene(map.scene);
         stage.show();
         AnimationTimer animator = new AnimationTimer(){
             @Override
             public void handle(long arg0) {
-                score.setScore(WIDTH,root);
-                alien.moveAliens();
-                alienS.makeShots(root,alien.aliens,alien);
-                alienS.moveAlienShots(defender.defender,HEIGHT);
+                score.setScore(map.getWIDTH(),map.root);
+                alien.moveAliens(map.getWIDTH());
+                alienS.makeShots(map.root,alien.aliens,alien);
+                alienS.moveShots(defender.defender,defender,map.getWIDTH());
                 defShots.moveShots();
-                defShots.chechShots(root,alien,score);
+                defShots.checkShots(map.root,alien,score);
                 alien.checkGame();
             }
         };

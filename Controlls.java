@@ -2,16 +2,12 @@ package com.company;
 
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import com.company.*;
-import java.awt.*;
-import java.util.ArrayList;
 import javafx.scene.shape.Rectangle;
 
-public class Controlls {
+abstract class Controlls {
     private long end=0;
 
-    public void initializeControls( Rectangle defender,Scene scene, Group root, int WIDTH,defenderShots defShots){
-
+    public void initializeControls( Rectangle defender,Scene scene, Group root, int WIDTH,defenderShots defShots,Defender def){
         scene.setOnKeyPressed(e -> {
             switch (e.getCode()) {
                 case LEFT:
@@ -20,7 +16,7 @@ public class Controlls {
                     }
                     break;
                 case RIGHT:
-                    if(defender.getX()!=WIDTH-20) {
+                    if(defender.getX()!=WIDTH-def.shipWidth) {
                         defender.setX(defender.getX() + 5);
                     }
                     break;
